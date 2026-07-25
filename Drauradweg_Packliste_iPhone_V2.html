@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Drauradweg Packliste</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg:#f2f2f7; --card:#fff; --text:#111; --muted:#6e6e73;
+  --line:#d1d1d6; --accent:#0a84ff; --ok:#34c759;
+}
+@media (prefers-color-scheme:dark) {
+  :root { --bg:#000; --card:#1c1c1e; --text:#fff; --muted:#a1a1a6; --line:#3a3a3c; }
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; padding:20px 16px 40px; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+main { max-width:760px; margin:auto; }
+h1 { font-size:34px; margin:8px 0 4px; }
+.sub { color:var(--muted); margin-bottom:16px; }
+.panel,.category {
+  background:var(--card); border:1px solid var(--line); border-radius:18px;
+  margin:12px 0; overflow:hidden;
+}
+.panel { padding:16px; }
+.progressline { display:flex; justify-content:space-between; font-weight:700; }
+.track { height:10px; background:var(--line); border-radius:99px; overflow:hidden; margin:10px 0 14px; }
+.bar { height:100%; width:0; background:var(--ok); transition:width .2s; }
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; }
+input[type="search"],button {
+  font:inherit; padding:12px; border-radius:12px; border:1px solid var(--line);
+  background:var(--card); color:var(--text);
+}
+button { cursor:pointer; }
+summary {
+  padding:16px; font-weight:700; display:flex; justify-content:space-between;
+  cursor:pointer; list-style:none;
+}
+summary::-webkit-details-marker { display:none; }
+.count { color:var(--muted); font-size:14px; }
+.items { border-top:1px solid var(--line); }
+.item {
+  display:flex; align-items:center; gap:12px; padding:13px 16px;
+  border-bottom:1px solid var(--line);
+}
+.item:last-child { border-bottom:none; }
+.item input { width:22px; height:22px; accent-color:var(--accent); flex:none; }
+.item.checked span { text-decoration:line-through; color:var(--muted); }
+.hidden { display:none !important; }
+.note { text-align:center; color:var(--muted); font-size:13px; margin-top:22px; }
+</style>
+</head>
+<body>
+<main>
+<h1>🚴 Drauradweg</h1>
+<div class="sub">10 Tage · ultraleicht · offline nutzbar</div>
+
+<div class="panel">
+  <div class="progressline"><span id="status">0 von 84 erledigt</span><span id="percent">0 %</span></div>
+  <div class="track"><div id="bar" class="bar"></div></div>
+  <div class="controls">
+    <input id="search" type="search" placeholder="Packliste durchsuchen">
+    <button id="reset" type="button">Zurücksetzen</button>
+  </div>
+</div>
+
+<div id="list">
+<details open class="category"><summary><span>Dokumente &amp; Geld</span><span class="count">0/6</span></summary><div class="items"><label class="item" data-search="dokumente &amp; geld personalausweis/reisepass"><input type="checkbox" id="item-0"><span>Personalausweis/Reisepass</span></label><label class="item" data-search="dokumente &amp; geld krankenversicherungskarte"><input type="checkbox" id="item-1"><span>Krankenversicherungskarte</span></label><label class="item" data-search="dokumente &amp; geld ec-/kreditkarte"><input type="checkbox" id="item-2"><span>EC-/Kreditkarte</span></label><label class="item" data-search="dokumente &amp; geld bargeld"><input type="checkbox" id="item-3"><span>Bargeld</span></label><label class="item" data-search="dokumente &amp; geld buchungsunterlagen"><input type="checkbox" id="item-4"><span>Buchungsunterlagen</span></label><label class="item" data-search="dokumente &amp; geld notfallkontakte"><input type="checkbox" id="item-5"><span>Notfallkontakte</span></label></div></details><details open class="category"><summary><span>Lenkertasche</span><span class="count">0/10</span></summary><div class="items"><label class="item" data-search="lenkertasche smartphone"><input type="checkbox" id="item-6"><span>Smartphone</span></label><label class="item" data-search="lenkertasche sonnenbrille"><input type="checkbox" id="item-7"><span>Sonnenbrille</span></label><label class="item" data-search="lenkertasche sonnencreme"><input type="checkbox" id="item-8"><span>Sonnencreme</span></label><label class="item" data-search="lenkertasche lippenpflege"><input type="checkbox" id="item-9"><span>Lippenpflege</span></label><label class="item" data-search="lenkertasche taschentücher"><input type="checkbox" id="item-10"><span>Taschentücher</span></label><label class="item" data-search="lenkertasche müsliriegel/snack"><input type="checkbox" id="item-11"><span>Müsliriegel/Snack</span></label><label class="item" data-search="lenkertasche kleine powerbank"><input type="checkbox" id="item-12"><span>Kleine Powerbank</span></label><label class="item" data-search="lenkertasche ladekabel"><input type="checkbox" id="item-13"><span>Ladekabel</span></label><label class="item" data-search="lenkertasche persönliche medikamente"><input type="checkbox" id="item-14"><span>Persönliche Medikamente</span></label><label class="item" data-search="lenkertasche schlüssel"><input type="checkbox" id="item-15"><span>Schlüssel</span></label></div></details><details open class="category"><summary><span>Werkzeug &amp; Ersatzteile</span><span class="count">0/11</span></summary><div class="items"><label class="item" data-search="werkzeug &amp; ersatzteile ersatzschläuche (2)"><input type="checkbox" id="item-16"><span>Ersatzschläuche (2)</span></label><label class="item" data-search="werkzeug &amp; ersatzteile flickzeug"><input type="checkbox" id="item-17"><span>Flickzeug</span></label><label class="item" data-search="werkzeug &amp; ersatzteile reifenheber"><input type="checkbox" id="item-18"><span>Reifenheber</span></label><label class="item" data-search="werkzeug &amp; ersatzteile minipumpe"><input type="checkbox" id="item-19"><span>Minipumpe</span></label><label class="item" data-search="werkzeug &amp; ersatzteile fahrrad-multitool"><input type="checkbox" id="item-20"><span>Fahrrad-Multitool</span></label><label class="item" data-search="werkzeug &amp; ersatzteile kettenschloss"><input type="checkbox" id="item-21"><span>Kettenschloss</span></label><label class="item" data-search="werkzeug &amp; ersatzteile kettenöl"><input type="checkbox" id="item-22"><span>Kettenöl</span></label><label class="item" data-search="werkzeug &amp; ersatzteile kabelbinder"><input type="checkbox" id="item-23"><span>Kabelbinder</span></label><label class="item" data-search="werkzeug &amp; ersatzteile gewebeband"><input type="checkbox" id="item-24"><span>Gewebeband</span></label><label class="item" data-search="werkzeug &amp; ersatzteile einweghandschuhe"><input type="checkbox" id="item-25"><span>Einweghandschuhe</span></label><label class="item" data-search="werkzeug &amp; ersatzteile kleiner lappen"><input type="checkbox" id="item-26"><span>Kleiner Lappen</span></label></div></details><details open class="category"><summary><span>Kleidung</span><span class="count">0/13</span></summary><div class="items"><label class="item" data-search="kleidung radtrikots (2)"><input type="checkbox" id="item-27"><span>Radtrikots (2)</span></label><label class="item" data-search="kleidung radhosen (2)"><input type="checkbox" id="item-28"><span>Radhosen (2)</span></label><label class="item" data-search="kleidung funktionsunterhemden (2)"><input type="checkbox" id="item-29"><span>Funktionsunterhemden (2)</span></label><label class="item" data-search="kleidung sportsocken (3 paar)"><input type="checkbox" id="item-30"><span>Sportsocken (3 Paar)</span></label><label class="item" data-search="kleidung unterwäsche (3)"><input type="checkbox" id="item-31"><span>Unterwäsche (3)</span></label><label class="item" data-search="kleidung t-shirt"><input type="checkbox" id="item-32"><span>T-Shirt</span></label><label class="item" data-search="kleidung lange hose"><input type="checkbox" id="item-33"><span>Lange Hose</span></label><label class="item" data-search="kleidung dünner pullover/fleece"><input type="checkbox" id="item-34"><span>Dünner Pullover/Fleece</span></label><label class="item" data-search="kleidung schlafkleidung"><input type="checkbox" id="item-35"><span>Schlafkleidung</span></label><label class="item" data-search="kleidung buff/halstuch"><input type="checkbox" id="item-36"><span>Buff/Halstuch</span></label><label class="item" data-search="kleidung freizeitschuhe oder sandalen"><input type="checkbox" id="item-37"><span>Freizeitschuhe oder Sandalen</span></label><label class="item" data-search="kleidung wäschebeutel"><input type="checkbox" id="item-38"><span>Wäschebeutel</span></label><label class="item" data-search="kleidung reisewaschmittel"><input type="checkbox" id="item-39"><span>Reisewaschmittel</span></label></div></details><details open class="category"><summary><span>Regen &amp; Wetter</span><span class="count">0/7</span></summary><div class="items"><label class="item" data-search="regen &amp; wetter regenjacke"><input type="checkbox" id="item-40"><span>Regenjacke</span></label><label class="item" data-search="regen &amp; wetter regenhose"><input type="checkbox" id="item-41"><span>Regenhose</span></label><label class="item" data-search="regen &amp; wetter windweste"><input type="checkbox" id="item-42"><span>Windweste</span></label><label class="item" data-search="regen &amp; wetter armlinge"><input type="checkbox" id="item-43"><span>Armlinge</span></label><label class="item" data-search="regen &amp; wetter beinlinge"><input type="checkbox" id="item-44"><span>Beinlinge</span></label><label class="item" data-search="regen &amp; wetter überschuhe"><input type="checkbox" id="item-45"><span>Überschuhe</span></label><label class="item" data-search="regen &amp; wetter dünne mütze/stirnband"><input type="checkbox" id="item-46"><span>Dünne Mütze/Stirnband</span></label></div></details><details open class="category"><summary><span>Hygiene</span><span class="count">0/8</span></summary><div class="items"><label class="item" data-search="hygiene kulturbeutel"><input type="checkbox" id="item-47"><span>Kulturbeutel</span></label><label class="item" data-search="hygiene zahnbürste"><input type="checkbox" id="item-48"><span>Zahnbürste</span></label><label class="item" data-search="hygiene zahnpasta"><input type="checkbox" id="item-49"><span>Zahnpasta</span></label><label class="item" data-search="hygiene duschgel/shampoo"><input type="checkbox" id="item-50"><span>Duschgel/Shampoo</span></label><label class="item" data-search="hygiene deodorant"><input type="checkbox" id="item-51"><span>Deodorant</span></label><label class="item" data-search="hygiene rasierer"><input type="checkbox" id="item-52"><span>Rasierer</span></label><label class="item" data-search="hygiene mikrofaserhandtuch"><input type="checkbox" id="item-53"><span>Mikrofaserhandtuch</span></label><label class="item" data-search="hygiene mückenschutz"><input type="checkbox" id="item-54"><span>Mückenschutz</span></label></div></details><details open class="category"><summary><span>Elektronik</span><span class="count">0/4</span></summary><div class="items"><label class="item" data-search="elektronik smartphone-ladegerät"><input type="checkbox" id="item-55"><span>Smartphone-Ladegerät</span></label><label class="item" data-search="elektronik smartwatch-/fahrradcomputer-ladegerät"><input type="checkbox" id="item-56"><span>Smartwatch-/Fahrradcomputer-Ladegerät</span></label><label class="item" data-search="elektronik große powerbank"><input type="checkbox" id="item-57"><span>Große Powerbank</span></label><label class="item" data-search="elektronik kopfhörer"><input type="checkbox" id="item-58"><span>Kopfhörer</span></label></div></details><details open class="category"><summary><span>Reiseapotheke</span><span class="count">0/8</span></summary><div class="items"><label class="item" data-search="reiseapotheke persönliche medikamente"><input type="checkbox" id="item-59"><span>Persönliche Medikamente</span></label><label class="item" data-search="reiseapotheke blasenpflaster"><input type="checkbox" id="item-60"><span>Blasenpflaster</span></label><label class="item" data-search="reiseapotheke pflaster"><input type="checkbox" id="item-61"><span>Pflaster</span></label><label class="item" data-search="reiseapotheke schmerzmittel"><input type="checkbox" id="item-62"><span>Schmerzmittel</span></label><label class="item" data-search="reiseapotheke desinfektion"><input type="checkbox" id="item-63"><span>Desinfektion</span></label><label class="item" data-search="reiseapotheke elastische binde"><input type="checkbox" id="item-64"><span>Elastische Binde</span></label><label class="item" data-search="reiseapotheke zeckenkarte/pinzette"><input type="checkbox" id="item-65"><span>Zeckenkarte/Pinzette</span></label><label class="item" data-search="reiseapotheke elektrolytpulver"><input type="checkbox" id="item-66"><span>Elektrolytpulver</span></label></div></details><details open class="category"><summary><span>Am Fahrrad</span><span class="count">0/9</span></summary><div class="items"><label class="item" data-search="am fahrrad fahrradhelm"><input type="checkbox" id="item-67"><span>Fahrradhelm</span></label><label class="item" data-search="am fahrrad fahrradhandschuhe"><input type="checkbox" id="item-68"><span>Fahrradhandschuhe</span></label><label class="item" data-search="am fahrrad radbrille"><input type="checkbox" id="item-69"><span>Radbrille</span></label><label class="item" data-search="am fahrrad fahrradschloss"><input type="checkbox" id="item-70"><span>Fahrradschloss</span></label><label class="item" data-search="am fahrrad fahrradbeleuchtung"><input type="checkbox" id="item-71"><span>Fahrradbeleuchtung</span></label><label class="item" data-search="am fahrrad fahrradcomputer/navi"><input type="checkbox" id="item-72"><span>Fahrradcomputer/Navi</span></label><label class="item" data-search="am fahrrad handyhalterung"><input type="checkbox" id="item-73"><span>Handyhalterung</span></label><label class="item" data-search="am fahrrad zwei trinkflaschen"><input type="checkbox" id="item-74"><span>Zwei Trinkflaschen</span></label><label class="item" data-search="am fahrrad wasserdichte packtaschen"><input type="checkbox" id="item-75"><span>Wasserdichte Packtaschen</span></label></div></details><details open class="category"><summary><span>Täglicher Check</span><span class="count">0/8</span></summary><div class="items"><label class="item" data-search="täglicher check wetter prüfen"><input type="checkbox" id="item-76"><span>Wetter prüfen</span></label><label class="item" data-search="täglicher check trinkflaschen füllen"><input type="checkbox" id="item-77"><span>Trinkflaschen füllen</span></label><label class="item" data-search="täglicher check reifendruck prüfen"><input type="checkbox" id="item-78"><span>Reifendruck prüfen</span></label><label class="item" data-search="täglicher check bremsen prüfen"><input type="checkbox" id="item-79"><span>Bremsen prüfen</span></label><label class="item" data-search="täglicher check licht prüfen"><input type="checkbox" id="item-80"><span>Licht prüfen</span></label><label class="item" data-search="täglicher check akkus laden"><input type="checkbox" id="item-81"><span>Akkus laden</span></label><label class="item" data-search="täglicher check kleidung waschen"><input type="checkbox" id="item-82"><span>Kleidung waschen</span></label><label class="item" data-search="täglicher check route für morgen prüfen"><input type="checkbox" id="item-83"><span>Route für morgen prüfen</span></label></div></details>
+</div>
+
+<div class="note">Die Häkchen werden lokal auf diesem iPhone gespeichert.</div>
+</main>
+
+<script>
+(function() {
+  var storageKey = "drauradweg-packliste-v3";
+  var checks = Array.prototype.slice.call(document.querySelectorAll('input[type="checkbox"]'));
+  var search = document.getElementById("search");
+  var reset = document.getElementById("reset");
+  var saved = {};
+
+  try {
+    saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+  } catch (e) {
+    saved = {};
+  }
+
+  function save() {
+    try { localStorage.setItem(storageKey, JSON.stringify(saved)); } catch (e) {}
+  }
+
+  function update() {
+    var visible = checks.filter(function(cb) {
+      return !cb.closest(".item").classList.contains("hidden");
+    });
+    var done = visible.filter(function(cb) { return cb.checked; }).length;
+    var total = visible.length;
+    var pct = total ? Math.round(done * 100 / total) : 0;
+
+    document.getElementById("status").textContent = done + " von " + total + " erledigt";
+    document.getElementById("percent").textContent = pct + " %";
+    document.getElementById("bar").style.width = pct + "%";
+
+    Array.prototype.forEach.call(document.querySelectorAll(".category"), function(cat) {
+      var rows = Array.prototype.slice.call(cat.querySelectorAll(".item")).filter(function(row) {
+        return !row.classList.contains("hidden");
+      });
+      var catDone = rows.filter(function(row) {
+        return row.querySelector("input").checked;
+      }).length;
+      cat.querySelector(".count").textContent = catDone + "/" + rows.length;
+      cat.classList.toggle("hidden", rows.length === 0);
+    });
+  }
+
+  checks.forEach(function(cb, i) {
+    cb.checked = saved[cb.id] === true;
+    cb.closest(".item").classList.toggle("checked", cb.checked);
+    cb.addEventListener("change", function() {
+      saved[cb.id] = cb.checked;
+      cb.closest(".item").classList.toggle("checked", cb.checked);
+      save();
+      update();
+    });
+  });
+
+  search.addEventListener("input", function() {
+    var q = search.value.toLowerCase().trim();
+    Array.prototype.forEach.call(document.querySelectorAll(".item"), function(row) {
+      var match = !q || row.getAttribute("data-search").indexOf(q) !== -1;
+      row.classList.toggle("hidden", !match);
+    });
+    update();
+  });
+
+  reset.addEventListener("click", function() {
+    if (confirm("Alle Häkchen zurücksetzen?")) {
+      saved = {};
+      checks.forEach(function(cb) {
+        cb.checked = false;
+        cb.closest(".item").classList.remove("checked");
+      });
+      save();
+      update();
+    }
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
