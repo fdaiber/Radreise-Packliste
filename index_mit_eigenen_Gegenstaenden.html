@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Drauradweg Packliste</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg:#f2f2f7; --card:#fff; --text:#111; --muted:#6e6e73;
+  --line:#d1d1d6; --accent:#0a84ff; --ok:#34c759; --danger:#ff3b30;
+}
+@media (prefers-color-scheme:dark) {
+  :root { --bg:#000; --card:#1c1c1e; --text:#fff; --muted:#a1a1a6; --line:#3a3a3c; }
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; padding:20px 16px 40px; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+main { max-width:760px; margin:auto; }
+h1 { font-size:34px; margin:8px 0 4px; }
+.sub { color:var(--muted); margin-bottom:16px; }
+.panel,.category {
+  background:var(--card); border:1px solid var(--line); border-radius:18px;
+  margin:12px 0; overflow:hidden;
+}
+.panel { padding:16px; }
+.progressline { display:flex; justify-content:space-between; font-weight:700; }
+.track { height:10px; background:var(--line); border-radius:99px; overflow:hidden; margin:10px 0 14px; }
+.bar { height:100%; width:0; background:var(--ok); transition:width .2s; }
+.controls { display:grid; grid-template-columns:1fr auto; gap:10px; }
+.add-grid { display:grid; grid-template-columns:1fr 1fr auto; gap:10px; margin-top:12px; }
+input[type="search"],input[type="text"],select,button {
+  font:inherit; padding:12px; border-radius:12px; border:1px solid var(--line);
+  background:var(--card); color:var(--text);
+}
+button { cursor:pointer; }
+button.add { background:var(--accent); color:white; border-color:transparent; font-weight:700; }
+summary {
+  padding:16px; font-weight:700; display:flex; justify-content:space-between;
+  cursor:pointer; list-style:none;
+}
+summary::-webkit-details-marker { display:none; }
+.count { color:var(--muted); font-size:14px; }
+.items { border-top:1px solid var(--line); }
+.item {
+  display:grid; grid-template-columns:30px 1fr auto; align-items:center; gap:12px;
+  padding:13px 16px; border-bottom:1px solid var(--line);
+}
+.item:last-child { border-bottom:none; }
+.item input { width:22px; height:22px; accent-color:var(--accent); }
+.item.checked .label { text-decoration:line-through; color:var(--muted); }
+.delete {
+  border:none; background:transparent; color:var(--danger); padding:4px 6px;
+  font-size:18px; line-height:1;
+}
+.hidden { display:none !important; }
+.note { text-align:center; color:var(--muted); font-size:13px; margin-top:22px; }
+@media (max-width:620px) {
+  .add-grid { grid-template-columns:1fr; }
+  .controls { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>🚴 Drauradweg</h1>
+<div class="sub">10 Tage · ultraleicht · offline nutzbar</div>
+
+<div class="panel">
+  <div class="progressline"><span id="status">0 von 0 erledigt</span><span id="percent">0 %</span></div>
+  <div class="track"><div id="bar" class="bar"></div></div>
+
+  <div class="controls">
+    <input id="search" type="search" placeholder="Packliste durchsuchen">
+    <button id="reset" type="button">Zurücksetzen</button>
+  </div>
+
+  <div class="add-grid">
+    <input id="newItem" type="text" placeholder="Neuen Gegenstand eingeben">
+    <select id="newCategory"><option value="Dokumente &amp; Geld">Dokumente &amp; Geld</option><option value="Lenkertasche">Lenkertasche</option><option value="Werkzeug &amp; Ersatzteile">Werkzeug &amp; Ersatzteile</option><option value="Kleidung">Kleidung</option><option value="Regen &amp; Wetter">Regen &amp; Wetter</option><option value="Hygiene">Hygiene</option><option value="Elektronik">Elektronik</option><option value="Reiseapotheke">Reiseapotheke</option><option value="Am Fahrrad">Am Fahrrad</option><option value="Täglicher Check">Täglicher Check</option><option value="Sonstiges">Sonstiges</option></select>
+    <button id="addItem" class="add" type="button">Hinzufügen</button>
+  </div>
+</div>
+
+<div id="list"></div>
+<div class="note">Häkchen und eigene Gegenstände werden lokal auf diesem iPhone gespeichert.</div>
+</main>
+
+<script>
+(function() {
+  var defaultCategories = {"Dokumente & Geld": ["Personalausweis/Reisepass", "Krankenversicherungskarte", "EC-/Kreditkarte", "Bargeld", "Buchungsunterlagen", "Notfallkontakte"], "Lenkertasche": ["Smartphone", "Sonnenbrille", "Sonnencreme", "Lippenpflege", "Taschentücher", "Müsliriegel/Snack", "Kleine Powerbank", "Ladekabel", "Persönliche Medikamente", "Schlüssel"], "Werkzeug & Ersatzteile": ["Ersatzschläuche (2)", "Flickzeug", "Reifenheber", "Minipumpe", "Fahrrad-Multitool", "Kettenschloss", "Kettenöl", "Kabelbinder", "Gewebeband", "Einweghandschuhe", "Kleiner Lappen"], "Kleidung": ["Radtrikots (2)", "Radhosen (2)", "Funktionsunterhemden (2)", "Sportsocken (3 Paar)", "Unterwäsche (3)", "T-Shirt", "Lange Hose", "Dünner Pullover/Fleece", "Schlafkleidung", "Buff/Halstuch", "Freizeitschuhe oder Sandalen", "Wäschebeutel", "Reisewaschmittel"], "Regen & Wetter": ["Regenjacke", "Regenhose", "Windweste", "Armlinge", "Beinlinge", "Überschuhe", "Dünne Mütze/Stirnband"], "Hygiene": ["Kulturbeutel", "Zahnbürste", "Zahnpasta", "Duschgel/Shampoo", "Deodorant", "Rasierer", "Mikrofaserhandtuch", "Mückenschutz"], "Elektronik": ["Smartphone-Ladegerät", "Smartwatch-/Fahrradcomputer-Ladegerät", "Große Powerbank", "Kopfhörer"], "Reiseapotheke": ["Persönliche Medikamente", "Blasenpflaster", "Pflaster", "Schmerzmittel", "Desinfektion", "Elastische Binde", "Zeckenkarte/Pinzette", "Elektrolytpulver"], "Am Fahrrad": ["Fahrradhelm", "Fahrradhandschuhe", "Radbrille", "Fahrradschloss", "Fahrradbeleuchtung", "Fahrradcomputer/Navi", "Handyhalterung", "Zwei Trinkflaschen", "Wasserdichte Packtaschen"], "Täglicher Check": ["Wetter prüfen", "Trinkflaschen füllen", "Reifendruck prüfen", "Bremsen prüfen", "Licht prüfen", "Akkus laden", "Kleidung waschen", "Route für morgen prüfen"], "Sonstiges": []};
+  var storageKey = "drauradweg-packliste-v4";
+  var customKey = "drauradweg-packliste-v4-custom";
+  var saved = {};
+  var custom = [];
+
+  try { saved = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch(e) {}
+  try { custom = JSON.parse(localStorage.getItem(customKey) || "[]"); } catch(e) {}
+
+  var list = document.getElementById("list");
+  var search = document.getElementById("search");
+  var reset = document.getElementById("reset");
+  var newItem = document.getElementById("newItem");
+  var newCategory = document.getElementById("newCategory");
+  var addItem = document.getElementById("addItem");
+
+  function makeId(category, text, customId) {
+    return customId ? "custom-" + customId : "default-" + category + "-" + text;
+  }
+
+  function saveState() {
+    try { localStorage.setItem(storageKey, JSON.stringify(saved)); } catch(e) {}
+    try { localStorage.setItem(customKey, JSON.stringify(custom)); } catch(e) {}
+  }
+
+  function allCategories() {
+    var merged = {};
+    Object.keys(defaultCategories).forEach(function(cat) {
+      merged[cat] = defaultCategories[cat].map(function(text) {
+        return { text:text, custom:false, id:makeId(cat,text) };
+      });
+    });
+    custom.forEach(function(entry) {
+      if (!merged[entry.category]) merged[entry.category] = [];
+      merged[entry.category].push({
+        text:entry.text, custom:true,
+        id:makeId(entry.category,entry.text,entry.id),
+        customId:entry.id
+      });
+    });
+    return merged;
+  }
+
+  function render() {
+    list.innerHTML = "";
+    var merged = allCategories();
+
+    Object.keys(merged).forEach(function(category) {
+      var details = document.createElement("details");
+      details.className = "category";
+      details.open = true;
+
+      var summary = document.createElement("summary");
+      var titleSpan = document.createElement("span");
+      titleSpan.textContent = category;
+      var countSpan = document.createElement("span");
+      countSpan.className = "count";
+      countSpan.textContent = "0/0";
+      summary.appendChild(titleSpan);
+      summary.appendChild(countSpan);
+
+      var items = document.createElement("div");
+      items.className = "items";
+
+      merged[category].forEach(function(entry) {
+        var row = document.createElement("label");
+        row.className = "item";
+        row.dataset.search = (category + " " + entry.text).toLowerCase();
+
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = saved[entry.id] === true;
+
+        var label = document.createElement("span");
+        label.className = "label";
+        label.textContent = entry.text;
+
+        var del = document.createElement("button");
+        del.type = "button";
+        del.className = "delete";
+        del.textContent = entry.custom ? "✕" : "";
+        del.setAttribute("aria-label","Eintrag löschen");
+        if (!entry.custom) del.style.visibility = "hidden";
+
+        row.classList.toggle("checked", cb.checked);
+
+        cb.addEventListener("change", function() {
+          saved[entry.id] = cb.checked;
+          row.classList.toggle("checked", cb.checked);
+          saveState();
+          update();
+        });
+
+        if (entry.custom) {
+          del.addEventListener("click", function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            if (confirm("Diesen Gegenstand löschen?")) {
+              custom = custom.filter(function(x) { return x.id !== entry.customId; });
+              delete saved[entry.id];
+              saveState();
+              render();
+            }
+          });
+        }
+
+        row.appendChild(cb);
+        row.appendChild(label);
+        row.appendChild(del);
+        items.appendChild(row);
+      });
+
+      details.appendChild(summary);
+      details.appendChild(items);
+      list.appendChild(details);
+    });
+
+    applyFilter();
+    update();
+  }
+
+  function update() {
+    var rows = Array.prototype.slice.call(document.querySelectorAll(".item")).filter(function(row) {
+      return !row.classList.contains("hidden");
+    });
+    var done = rows.filter(function(row) { return row.querySelector("input").checked; }).length;
+    var total = rows.length;
+    var pct = total ? Math.round(done * 100 / total) : 0;
+
+    document.getElementById("status").textContent = done + " von " + total + " erledigt";
+    document.getElementById("percent").textContent = pct + " %";
+    document.getElementById("bar").style.width = pct + "%";
+
+    Array.prototype.forEach.call(document.querySelectorAll(".category"), function(cat) {
+      var catRows = Array.prototype.slice.call(cat.querySelectorAll(".item")).filter(function(row) {
+        return !row.classList.contains("hidden");
+      });
+      var catDone = catRows.filter(function(row) {
+        return row.querySelector("input").checked;
+      }).length;
+      cat.querySelector(".count").textContent = catDone + "/" + catRows.length;
+      cat.classList.toggle("hidden", catRows.length === 0);
+    });
+  }
+
+  function applyFilter() {
+    var q = search.value.toLowerCase().trim();
+    Array.prototype.forEach.call(document.querySelectorAll(".item"), function(row) {
+      var match = !q || row.dataset.search.indexOf(q) !== -1;
+      row.classList.toggle("hidden", !match);
+    });
+    update();
+  }
+
+  function addCustomItem() {
+    var text = newItem.value.trim();
+    if (!text) return;
+    custom.push({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+      text: text,
+      category: newCategory.value
+    });
+    newItem.value = "";
+    saveState();
+    render();
+  }
+
+  addItem.addEventListener("click", addCustomItem);
+  newItem.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") addCustomItem();
+  });
+  search.addEventListener("input", applyFilter);
+
+  reset.addEventListener("click", function() {
+    if (confirm("Alle Häkchen zurücksetzen? Eigene Gegenstände bleiben erhalten.")) {
+      saved = {};
+      saveState();
+      render();
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
